@@ -1,48 +1,45 @@
-# Class: chmod_r
-# ===========================
+# Chmod_r
 #
-# Full description of class chmod_r here.
-#
-# Parameters
-# ----------
-#
-# Document parameters here.
-#
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
-#
-# Variables
-# ----------
-#
-# Here you should define a list of variables that this module would require.
-#
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
-#
-# Examples
-# --------
-#
-# @example
-#    class { 'chmod_r':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#    }
-#
-# Authors
-# -------
-#
-# Author Name <author@domain.com>
-#
-# Copyright
-# ---------
-#
-# Copyright 2017 Your name here, unless otherwise noted.
-#
-class chmod_r {
+# Perform a recursive chmod (chmod -R) when required
+define chmod_r(
+    $want_mode,
+    $dir    = $title,
+    $watch  = false,
+) {
+  if $watch {
+    $refreshonly  = true
+    $_watch       = $watch
+  } else {
+    $refreshonly  = false
+    $_watch       = undef
+  }
 
+  Exec {
+    refreshonly => $refreshonly,
+    subscribe   => $_watch,
+    path        => [
+      "/bin",
+      "/usr/bin",
+    ],
+  }
 
+  exec { "chmod -R for ${dir} (files)":
+    command => "find ${dir} -type f -exec chmod ${want_mode} {} \\;",
+    onlyif  => "find ${dir} \\( -type f -not -perm ${want_mode} \\) | grep .",
+  }
+
+  # how the hell do you do this as a bitmask without writing several lines?
+  # First off, there is no bitmask operator in puppet dsl... Tried bash, too
+  # hard.  The converions wanted are simple and we can coearse a string:
+  # X  1 -> 1
+  # W  2 -> 2
+  # R  4 -> 5
+  # RW 6 -> 7
+  # So swallow pride and use a nested regexp...
+  $_want_mode = regsubst(regsubst($want_mode, '4', '5', 'G'), '6', '7', 'G')
+  notify {"mode ${want_mode} changed to ${_want_mode}":}
+  exec { "chmod -R for ${dir} (dirs)":
+    command => "find ${dir} -type d -exec chmod ${_want_mode} {} \\;",
+    onlyif  => "find ${dir} \\( -type d -not -perm ${_want_mode} \\) | grep .",
+  }
 }

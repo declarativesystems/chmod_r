@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/GeoffWilliams/chmod_r.svg?branch=master)](https://travis-ci.org/GeoffWilliams/chmod_r)
 # chmod_r
 
 #### Table of Contents

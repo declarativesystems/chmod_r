@@ -9,4 +9,7 @@
 # Learn more about module testing here:
 # https://docs.puppet.com/guides/tests_smoke.html
 #
-include ::chmod_r
+# @PDQTest
+chmod_r { "/tmp/foo":
+  want_mode => "0666",
+}
