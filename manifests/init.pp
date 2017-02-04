@@ -25,6 +25,13 @@ define chmod_r(
     $_watch       = undef
   }
 
+  # must use '!' instead of -not on solaris or we get a bad command error
+  if $facts['os']['family'] == 'Solaris' {
+    $predicate = '!'
+  } else {
+    $predicate = '-not'
+  }
+
   Exec {
     refreshonly => $refreshonly,
     subscribe   => $_watch,
@@ -36,21 +43,20 @@ define chmod_r(
 
   exec { "chmod -R for ${dir} (files)":
     command => "find ${dir} -type f -exec chmod ${want_mode} {} \\;",
-    onlyif  => "find ${dir} \\( -type f -not -perm ${want_mode} \\) | grep .",
+    onlyif  => "find ${dir} \\( -type f ${predicate} -perm ${want_mode} \\) | grep .",
   }
 
   # how the hell do you do this as a bitmask without writing several lines?
   # First off, there is no bitmask operator in puppet dsl... Tried bash, too
-  # hard.  The converions wanted are simple and we can coearse a string:
+  # hard.  The conversions wanted are simple and we can coearse a string:
   # X  1 -> 1
   # W  2 -> 2
   # R  4 -> 5
   # RW 6 -> 7
   # So swallow pride and use a nested regexp...
   $_want_mode = regsubst(regsubst($want_mode, '4', '5', 'G'), '6', '7', 'G')
-  notify {"mode ${want_mode} changed to ${_want_mode}":}
   exec { "chmod -R for ${dir} (dirs)":
     command => "find ${dir} -type d -exec chmod ${_want_mode} {} \\;",
-    onlyif  => "find ${dir} \\( -type d -not -perm ${_want_mode} \\) | grep .",
+    onlyif  => "find ${dir} \\( -type d ${predicate} -perm ${_want_mode} \\) | grep .",
   }
 }
