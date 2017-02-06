@@ -34,3 +34,11 @@
 @test "/tmp/notouch was not descended" {
   [[ $(stat -c %a /tmp/notouch) == "644" ]]
 }
+
+@test "/tmp/foo/skipdir was not descended" {
+  [[ $(stat -c %a /tmp/foo/skipdir) == "755" ]]
+}
+
+@test "/tmp/foo/skipdir/skipfile was not descended" {
+  [[ $(stat -c %a /tmp/foo/skipdir/skipfile) == "644" ]]
+}

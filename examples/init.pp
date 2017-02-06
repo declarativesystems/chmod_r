@@ -12,4 +12,5 @@
 # @PDQTest
 chmod_r { "/tmp/foo":
   want_mode => "0666",
+  skip      => "/tmp/foo/skipdir",
 }

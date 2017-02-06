@@ -12,10 +12,12 @@
 #   files with incorrect ownership.  Note that if this parameter is not set,
 #   the chmod command will run every time find tells us we need to (eg
 #   every puppet run)
+# @param skip Do not include this directory when running chmod
 define chmod_r(
     $want_mode,
     $dir    = $name,
     $watch  = false,
+    $skip    = false,
 ) {
   if $watch {
     $refreshonly  = true
@@ -32,6 +34,12 @@ define chmod_r(
     $predicate = '-not'
   }
 
+  if $skip {
+    $_skip = "-wholename ${skip} -prune -o"
+  } else {
+    $_skip = ""
+  }
+
   Exec {
     refreshonly => $refreshonly,
     subscribe   => $_watch,
@@ -42,8 +50,8 @@ define chmod_r(
   }
 
   exec { "chmod -R for ${dir} (files)":
-    command => "find ${dir} -type f -exec chmod ${want_mode} {} \\;",
-    onlyif  => "find ${dir} \\( -type f ${predicate} -perm ${want_mode} \\) | grep .",
+    command => "find ${dir} ${_skip} -type f -exec chmod ${want_mode} {} \\;",
+    onlyif  => "find ${dir} ${_skip} \\( -type f ${predicate} -perm ${want_mode} \\) -print | grep .",
   }
 
   # how the hell do you do this as a bitmask without writing several lines?
@@ -56,7 +64,7 @@ define chmod_r(
   # So swallow pride and use a nested regexp...
   $_want_mode = regsubst(regsubst($want_mode, '4', '5', 'G'), '6', '7', 'G')
   exec { "chmod -R for ${dir} (dirs)":
-    command => "find ${dir} -type d -exec chmod ${_want_mode} {} \\;",
-    onlyif  => "find ${dir} \\( -type d ${predicate} -perm ${_want_mode} \\) | grep .",
+    command => "find ${dir} ${_skip} -type d -exec chmod ${_want_mode} {} \\;",
+    onlyif  => "find ${dir} ${_skip} \\( -type d ${predicate} -perm ${_want_mode} \\) -print | grep .",
   }
 }

@@ -31,6 +31,14 @@
   [[ $(stat -c %a /tmp/foo/bar/baz/clyde) == "644" ]]
 }
 
-@test "/tmp/notouch was not descended" {
+@test "/tmp/notouch default perms" {
   [[ $(stat -c %a /tmp/foo/bar/baz/clyde) == "644" ]]
+}
+
+@test "/tmp/foo/skipdir default perms" {
+  [[ $(stat -c %a /tmp/foo/skipdir) == "755" ]]
+}
+
+@test "/tmp/foo/skipdir/skipfile default perms" {
+  [[ $(stat -c %a /tmp/foo/skipdir/skipfile) == "644" ]]
 }
