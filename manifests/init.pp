@@ -14,10 +14,10 @@
 #   every puppet run)
 # @param skip Do not include this directory when running chmod
 define chmod_r(
-    String              $want_mode,
-    String              $dir        = $name,
-    Optional[Resource]  $watch      = undef,
-    Optional[String]    $skip       = undef,
+    String                                                    $want_mode,
+    String                                                    $dir        = $name,
+    Optional[Variant[Type[Resource], Array[Type[Resource]]]]  $watch      = undef,
+    Optional[String]                                          $skip       = undef,
 ) {
   if $watch {
     $refreshonly  = true

@@ -36,7 +36,7 @@ The octal permissions to chmod to and check for
 
 ##### `watch`
 
-Data type: `Optional[Resource]`
+Data type: `Optional[Variant[Type[Resource], Array[Type[Resource]]]]`
 
 Resource reference to watch (eg Package['foo']), if set, we will
 only run the chown if this resource sends a refresh event AND we identify

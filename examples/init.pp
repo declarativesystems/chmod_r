@@ -10,7 +10,28 @@
 # https://docs.puppet.com/guides/tests_smoke.html
 #
 # @PDQTest
+user { "alice":
+  ensure => present,
+  gid    => "bob",
+}
+
+group { "bob":
+  ensure => present,
+}
+
 chmod_r { "/tmp/foo":
   want_mode => "0666",
   skip      => "/tmp/foo/skipdir",
+}
+
+chmod_r { "/foo":
+  want_mode => "0666",
+  skip      => "/tmp/foo/skipdir",
+  watch     => User["alice"],
+}
+
+chmod_r { "/bar":
+  want_mode => "0666",
+  skip      => "/tmp/foo/skipdir",
+  watch     => [User["alice"], Group["bob"]],
 }

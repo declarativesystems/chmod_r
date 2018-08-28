@@ -1,6 +1,6 @@
 {
   "name": "geoffwilliams-chmod_r",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "author": "geoffwilliams",
   "summary": "Do a chmod -R in puppet",
   "license": "Apache-2.0",
@@ -8,7 +8,6 @@
   "project_page": "https://github.com/GeoffWilliams/chmod_r",
   "issues_url": "https://github.com/GeoffWilliams/chmod_r/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ],
   "data_provider": null
 }

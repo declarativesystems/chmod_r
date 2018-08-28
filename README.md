@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/declarativesystems/chmod_r.svg?branch=master)](https://travis-ci.org/declarativesystems/chmod_r)
+[![Build Status](https://travis-ci.org/declarativesystems/puppet-chown_r.svg?branch=master)](https://travis-ci.org/declarativesystems/puppet-chown_r)
 # chmod_r
 
 #### Table of Contents
