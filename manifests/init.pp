@@ -1,12 +1,12 @@
-# Chmod_r
+# @summary Recursive chmod
 #
 # Perform the equivalent of a recursive chmod (chmod -R) when required.  This
 # avoids having to use recursive `file` resources with large directories as this
 # can bring about poor performance in the Puppet Master as well as placing
 # high demand on storage requirements
 #
-# @params dir The directory to check and chmod.  Defaults to $name
-# @params want_mode The octal permissions to chmod to and check for
+# @param dir The directory to check and chmod.  Defaults to $name
+# @param want_mode The octal permissions to chmod to and check for
 # @param watch Resource reference to watch (eg Package['foo']), if set, we will
 #   only run the chown if this resource sends a refresh event AND we identify
 #   files with incorrect ownership.  Note that if this parameter is not set,
@@ -14,10 +14,10 @@
 #   every puppet run)
 # @param skip Do not include this directory when running chmod
 define chmod_r(
-    $want_mode,
-    $dir    = $name,
-    $watch  = false,
-    $skip    = false,
+    String              $want_mode,
+    String              $dir        = $name,
+    Optional[Resource]  $watch      = undef,
+    Optional[String]    $skip       = undef,
 ) {
   if $watch {
     $refreshonly  = true

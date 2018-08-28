@@ -4,3 +4,6 @@ Puppetfile.lock
 .librarian
 .tmp
 /pkg
+.Puppetfile.pdqtest
+.idea
+.yardoc
