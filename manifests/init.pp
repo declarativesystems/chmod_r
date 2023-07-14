@@ -50,7 +50,7 @@ define chmod_r(
   }
 
   exec { "chmod -R for ${dir} (files)":
-    command => "find ${dir} ${_skip} -type f -exec chmod ${want_mode} {} \\;",
+    command => "find ${dir} ${_skip} -type f -not -perm ${want_mode} -exec chmod ${want_mode} {} \\;",
     onlyif  => "find ${dir} ${_skip} \\( -type f ${predicate} -perm ${want_mode} \\) -print | grep .",
   }
 
@@ -64,7 +64,7 @@ define chmod_r(
   # So swallow pride and use a nested regexp...
   $_want_mode = regsubst(regsubst($want_mode, '4', '5', 'G'), '6', '7', 'G')
   exec { "chmod -R for ${dir} (dirs)":
-    command => "find ${dir} ${_skip} -type d -exec chmod ${_want_mode} {} \\;",
+    command => "find ${dir} ${_skip} -type d -not -perm ${_want_mode} -exec chmod ${_want_mode} {} \\;",
     onlyif  => "find ${dir} ${_skip} \\( -type d ${predicate} -perm ${_want_mode} \\) -print | grep .",
   }
 }
